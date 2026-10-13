@@ -1,7 +1,7 @@
 {
   "name": "english-to-kanji-converter",
   "version": "1.0.0",
-  "description": "英語の名前を口頭で入力して漢字に変換するアプリ",
+  "description": "Turn your English name into a Japanese kanji name by voice or text",
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/server.ts",
@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.54.0",
+    "dotenv": "^16.4.5",
     "express": "^4.19.2"
   },
   "devDependencies": {

@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>名前漢字メーカー</title>
-  <meta name="description" content="英語の名前を話しかけると、意味のある漢字に変換してハンコ風に表示するアプリ">
+  <title>Kanji Name Maker</title>
+  <meta name="description" content="Say your name and get your own Japanese kanji name, chosen to match who you are.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&family=Poppins:wght@600;800&family=Yuji+Syuku&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Yuji+Syuku&family=Zen+Maru+Gothic:wght@500;700&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg-0: #1a0b2e;
@@ -27,68 +27,59 @@
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
-    html, body { height: 100%; }
+    html { background: var(--bg-0); }
 
     body {
-      font-family: 'Zen Maru Gothic', 'Poppins', 'Hiragino Sans', sans-serif;
+      font-family: 'Poppins', 'Zen Maru Gothic', sans-serif;
       color: var(--text);
+      background: var(--bg-0);
+      min-height: 100vh;
+      padding: 40px 16px 56px;
+      overflow-x: hidden;
+    }
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
       background: linear-gradient(135deg, var(--bg-0), var(--bg-1) 45%, var(--bg-2));
       background-size: 200% 200%;
       animation: bgShift 18s ease infinite;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 24px 16px;
-      overflow-x: hidden;
-      position: relative;
     }
-
     @keyframes bgShift {
       0%, 100% { background-position: 0% 50%; }
       50% { background-position: 100% 50%; }
     }
 
-    /* ===== Floating background kanji ===== */
-    .bg-kanji {
-      position: fixed;
-      inset: 0;
-      overflow: hidden;
-      pointer-events: none;
-      z-index: 0;
-    }
+    /* ===== Background decoration ===== */
+    .bg-kanji { position: fixed; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; }
     .bg-kanji span {
       position: absolute;
       font-family: 'Yuji Syuku', serif;
       color: rgba(255, 255, 255, 0.035);
-      font-weight: 900;
       user-select: none;
       animation: floatUp linear infinite;
     }
     @keyframes floatUp {
       0% { transform: translateY(20vh) rotate(0deg); opacity: 0; }
-      10% { opacity: 1; }
-      90% { opacity: 1; }
+      10%, 90% { opacity: 1; }
       100% { transform: translateY(-120vh) rotate(25deg); opacity: 0; }
     }
-
-    /* ===== Sakura petals ===== */
     .petal {
       position: fixed;
       top: -10vh;
-      width: 14px;
-      height: 14px;
+      width: 14px; height: 14px;
       background: radial-gradient(circle at 30% 30%, #ffd6ec, #ff9ed2);
       border-radius: 150% 0 150% 0;
       pointer-events: none;
       z-index: 1;
-      opacity: 0.8;
       animation: fall linear infinite;
     }
     @keyframes fall {
-      0% { transform: translateX(0) translateY(0) rotate(0deg); opacity: 0; }
+      0% { transform: translate(0, 0) rotate(0deg); opacity: 0; }
       10% { opacity: 0.85; }
-      100% { transform: translateX(16vw) translateY(110vh) rotate(540deg); opacity: 0; }
+      100% { transform: translate(16vw, 110vh) rotate(540deg); opacity: 0; }
     }
 
     /* ===== Card ===== */
@@ -96,14 +87,15 @@
       position: relative;
       z-index: 2;
       width: 100%;
-      max-width: 540px;
+      max-width: 600px;
+      margin: 0 auto;
       background: var(--glass);
       backdrop-filter: blur(18px);
       -webkit-backdrop-filter: blur(18px);
       border: 1px solid var(--glass-border);
       border-radius: 28px;
-      padding: 40px 32px 36px;
-      box-shadow: 0 30px 70px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255,255,255,0.08);
+      padding: 40px 32px 32px;
+      box-shadow: 0 30px 70px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.08);
     }
 
     .badge {
@@ -111,22 +103,20 @@
       align-items: center;
       gap: 6px;
       font-size: 0.72rem;
-      font-weight: 700;
-      letter-spacing: 0.08em;
+      font-weight: 600;
+      letter-spacing: 0.1em;
       color: var(--gold);
       background: rgba(255, 211, 110, 0.12);
       border: 1px solid rgba(255, 211, 110, 0.3);
       padding: 5px 12px;
       border-radius: 999px;
-      margin-bottom: 18px;
+      margin-bottom: 16px;
     }
-
     h1 {
-      font-size: 2rem;
-      font-weight: 900;
-      line-height: 1.2;
-      margin-bottom: 8px;
-      letter-spacing: 0.02em;
+      font-size: 2.1rem;
+      font-weight: 800;
+      line-height: 1.15;
+      margin-bottom: 10px;
       background: linear-gradient(100deg, var(--gold), var(--pink) 40%, var(--magenta) 65%, var(--violet));
       background-size: 200% auto;
       -webkit-background-clip: text;
@@ -134,14 +124,39 @@
       -webkit-text-fill-color: transparent;
       animation: shine 6s linear infinite;
     }
+    h1 .jp { font-family: 'Yuji Syuku', serif; font-weight: 400; font-size: 0.8em; margin-left: 6px; }
     @keyframes shine { to { background-position: 200% center; } }
+    .subtitle { color: var(--muted); font-size: 0.92rem; line-height: 1.6; margin-bottom: 28px; }
 
-    .subtitle {
-      color: var(--muted);
-      font-size: 0.92rem;
-      line-height: 1.6;
-      margin-bottom: 28px;
+    /* ===== Steps ===== */
+    .step { margin-bottom: 26px; }
+    .step-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 4px;
     }
+    .step-num {
+      width: 26px; height: 26px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      background: linear-gradient(135deg, var(--magenta), var(--violet));
+      flex-shrink: 0;
+    }
+    .optional {
+      font-size: 0.68rem;
+      font-weight: 600;
+      color: var(--muted);
+      border: 1px solid var(--glass-border);
+      padding: 2px 8px;
+      border-radius: 999px;
+    }
+    .step-hint { font-size: 0.82rem; color: var(--muted); margin: 0 0 14px 36px; }
 
     .speech-unsupported {
       display: none;
@@ -151,37 +166,29 @@
       border: 1px solid rgba(255, 90, 90, 0.25);
       border-radius: 10px;
       padding: 10px 14px;
-      margin-bottom: 16px;
+      margin-bottom: 12px;
     }
 
-    .input-area {
-      display: flex;
-      gap: 12px;
-      align-items: center;
-      margin-bottom: 16px;
-    }
-
+    .input-area { display: flex; gap: 12px; align-items: center; }
     input[type="text"] {
       flex: 1;
-      padding: 16px 18px;
+      min-width: 0;
+      padding: 15px 18px;
       background: rgba(0, 0, 0, 0.25);
       border: 1.5px solid var(--glass-border);
       border-radius: 14px;
       color: #fff;
-      font-size: 1.05rem;
+      font-size: 1rem;
       font-family: inherit;
       outline: none;
       transition: border-color 0.2s, box-shadow 0.2s;
     }
-    input[type="text"]:focus {
-      border-color: var(--magenta);
-      box-shadow: 0 0 0 4px rgba(232, 121, 249, 0.18);
-    }
+    input[type="text"]:focus { border-color: var(--magenta); box-shadow: 0 0 0 4px rgba(232, 121, 249, 0.18); }
     input[type="text"]::placeholder { color: #8a7ba8; }
 
     .mic-btn {
       position: relative;
-      width: 56px; height: 56px;
+      width: 54px; height: 54px;
       flex-shrink: 0;
       border-radius: 50%;
       border: none;
@@ -190,16 +197,13 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: transform 0.15s, box-shadow 0.2s;
+      transition: transform 0.15s;
       box-shadow: 0 6px 18px rgba(129, 140, 248, 0.4);
     }
     .mic-btn:hover { transform: scale(1.08); }
     .mic-btn:disabled { opacity: 0.35; cursor: not-allowed; }
-    .mic-btn svg { width: 24px; height: 24px; fill: #fff; z-index: 2; }
-
-    .mic-btn.recording {
-      background: linear-gradient(135deg, var(--vermillion), #ff5e8a);
-    }
+    .mic-btn svg { width: 24px; height: 24px; fill: #fff; }
+    .mic-btn.recording { background: linear-gradient(135deg, var(--vermillion), #ff5e8a); }
     .mic-btn.recording::before,
     .mic-btn.recording::after {
       content: '';
@@ -210,11 +214,52 @@
       animation: ripple 1.5s ease-out infinite;
     }
     .mic-btn.recording::after { animation-delay: 0.6s; }
-    @keyframes ripple {
-      0% { transform: scale(1); opacity: 0.8; }
-      100% { transform: scale(2.1); opacity: 0; }
-    }
+    @keyframes ripple { to { transform: scale(2.1); opacity: 0; } }
 
+    /* ===== Option groups ===== */
+    .group {
+      background: rgba(0, 0, 0, 0.18);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      padding: 16px 16px 14px;
+      margin-bottom: 12px;
+    }
+    .group-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-size: 0.86rem;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+    .group-label small { font-weight: 500; color: var(--muted); font-size: 0.74rem; }
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+    .chip {
+      font-family: inherit;
+      font-size: 0.84rem;
+      font-weight: 500;
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.06);
+      border: 1.5px solid var(--glass-border);
+      padding: 7px 14px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s, transform 0.1s;
+    }
+    .chip:hover { background: rgba(255, 255, 255, 0.12); }
+    .chip:active { transform: scale(0.96); }
+    .chip.selected {
+      background: linear-gradient(135deg, rgba(232, 121, 249, 0.35), rgba(129, 140, 248, 0.35));
+      border-color: var(--magenta);
+    }
+    .chip.shake { animation: shake 0.3s; }
+    @keyframes shake {
+      25% { transform: translateX(-4px); }
+      75% { transform: translateX(4px); }
+    }
+    .group input[type="text"] { width: 100%; padding: 12px 14px; font-size: 0.9rem; }
+
+    /* ===== Convert button ===== */
     .convert-btn {
       position: relative;
       width: 100%;
@@ -232,206 +277,289 @@
       box-shadow: 0 10px 28px rgba(232, 121, 249, 0.35);
       transition: transform 0.15s, box-shadow 0.2s, opacity 0.2s;
     }
-    .convert-btn:hover:not(:disabled) { transform: translateY(-2px); background-position: right center; box-shadow: 0 14px 34px rgba(232, 121, 249, 0.5); }
-    .convert-btn:active:not(:disabled) { transform: translateY(0); }
+    .convert-btn:hover:not(:disabled) { transform: translateY(-2px); background-position: right center; }
     .convert-btn:disabled { opacity: 0.4; cursor: not-allowed; }
     .convert-btn::after {
       content: '';
       position: absolute;
       top: 0; left: -120%;
       width: 60%; height: 100%;
-      background: linear-gradient(100deg, transparent, rgba(255,255,255,0.4), transparent);
+      background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.4), transparent);
       transform: skewX(-20deg);
     }
     .convert-btn:hover:not(:disabled)::after { animation: sweep 0.8s ease; }
     @keyframes sweep { to { left: 160%; } }
 
-    .status {
-      text-align: center;
-      font-size: 0.85rem;
-      color: var(--muted);
-      min-height: 22px;
-      margin-top: 16px;
-    }
+    .status { text-align: center; font-size: 0.85rem; color: var(--muted); min-height: 22px; margin-top: 14px; }
     .status.error { color: #ff9b9b; }
     .status.listening { color: var(--pink); }
 
-    /* ===== Result (Hanko stamp) ===== */
+    /* ===== Result ===== */
     .result {
-      margin-top: 28px;
       display: none;
       text-align: center;
+      margin-top: 18px;
+      padding-top: 28px;
+      border-top: 1px dashed var(--glass-border);
+      scroll-margin-top: 24px;
     }
     .result.visible { display: block; }
-
-    .result-label {
-      font-size: 0.8rem;
-      color: var(--muted);
-      margin-bottom: 18px;
-    }
+    .result-label { font-size: 0.85rem; color: var(--muted); margin-bottom: 20px; }
     .result-label b { color: var(--text); }
 
     .hanko {
-      --size: 180px;
+      --size: 190px;
       width: var(--size);
       height: var(--size);
-      margin: 0 auto 10px;
+      margin: 0 auto 14px;
       border-radius: 50%;
       border: 7px solid var(--vermillion);
       display: flex;
       align-items: center;
       justify-content: center;
-      position: relative;
-      color: var(--vermillion);
-      background:
-        radial-gradient(circle at 50% 50%, rgba(232, 50, 30, 0.08), transparent 70%);
+      background: radial-gradient(circle, rgba(232, 50, 30, 0.08), transparent 70%);
       box-shadow: 0 0 0 2px rgba(232, 50, 30, 0.15), 0 14px 40px rgba(232, 50, 30, 0.25);
     }
-    .result.visible .hanko { animation: stampPress 0.55s cubic-bezier(.18,1.4,.4,1) both; }
+    .result.visible .hanko { animation: stampPress 0.55s cubic-bezier(.18, 1.4, .4, 1) both; }
     @keyframes stampPress {
       0% { transform: scale(2.4) rotate(-14deg); opacity: 0; filter: blur(4px); }
       55% { transform: scale(0.9) rotate(3deg); opacity: 1; filter: blur(0); }
       75% { transform: scale(1.05) rotate(-1deg); }
-      100% { transform: scale(1) rotate(0deg); opacity: 1; }
+      100% { transform: scale(1) rotate(0); opacity: 1; }
     }
-
     .hanko .kanji {
-      font-family: 'Yuji Syuku', 'Zen Maru Gothic', serif;
-      font-weight: 900;
+      font-family: 'Yuji Syuku', serif;
       line-height: 1.05;
-      letter-spacing: 0.02em;
-      /* ink texture via subtle gradient */
+      padding: 0 6px;
       background: linear-gradient(135deg, var(--vermillion-deep), var(--vermillion));
       -webkit-background-clip: text;
       background-clip: text;
       -webkit-text-fill-color: transparent;
-      padding: 0 6px;
     }
-    /* font size adapts to length via JS classes */
-    .hanko .kanji.len-1 { font-size: 5.2rem; }
-    .hanko .kanji.len-2 { font-size: 4rem; }
-    .hanko .kanji.len-3 { font-size: 2.9rem; }
-    .hanko .kanji.len-4 { font-size: 2.3rem; }
-    .hanko .kanji.len-long { font-size: 1.7rem; writing-mode: horizontal-tb; }
+    .hanko .kanji.len-1 { font-size: 5.4rem; }
+    .hanko .kanji.len-2 { font-size: 4.2rem; }
+    .hanko .kanji.len-3 { font-size: 3rem; }
+    .hanko .kanji.len-4 { font-size: 2.4rem; }
+    .hanko .kanji.len-long { font-size: 1.8rem; }
 
-    .reading {
-      font-size: 1.15rem;
-      color: var(--gold);
-      letter-spacing: 0.2em;
+    .reading { margin-bottom: 22px; }
+    .reading .romaji { font-size: 1.3rem; font-weight: 700; color: var(--gold); letter-spacing: 0.06em; }
+    .reading .hiragana { font-family: 'Zen Maru Gothic', sans-serif; font-size: 0.95rem; color: var(--muted); margin-top: 2px; letter-spacing: 0.15em; }
+
+    .section-title {
+      text-align: left;
+      font-size: 0.78rem;
       font-weight: 700;
-      margin: 6px 0 20px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 10px;
     }
-    .result.visible .reading { animation: fadeUp 0.5s 0.35s both; }
+    .char-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 10px;
+      margin-bottom: 22px;
+    }
+    .char-card {
+      background: rgba(0, 0, 0, 0.22);
+      border: 1px solid var(--glass-border);
+      border-radius: 14px;
+      padding: 14px 10px;
+    }
+    .char-card .c { font-family: 'Yuji Syuku', serif; font-size: 2.4rem; color: #ff8a7a; line-height: 1.1; }
+    .char-card .r { font-size: 0.78rem; font-weight: 600; color: var(--gold); margin: 4px 0 2px; }
+    .char-card .m { font-size: 0.82rem; color: var(--text); line-height: 1.35; }
 
     .explanation {
-      font-size: 0.92rem;
+      font-size: 0.93rem;
       line-height: 1.75;
-      color: #d8ccf0;
+      color: #e3d9f5;
       text-align: left;
       background: rgba(0, 0, 0, 0.22);
       border: 1px solid var(--glass-border);
       border-radius: 14px;
       padding: 16px 18px;
-      margin-bottom: 16px;
+      margin-bottom: 18px;
     }
-    .result.visible .explanation { animation: fadeUp 0.5s 0.45s both; }
+    .result.visible .reading,
+    .result.visible .char-section,
+    .result.visible .explanation-section { animation: fadeUp 0.5s 0.35s both; }
+    .result.visible .char-section { animation-delay: 0.45s; }
+    .result.visible .explanation-section { animation-delay: 0.55s; }
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(12px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
-    .copy-btn {
+    .result-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+    .ghost-btn {
       background: rgba(255, 255, 255, 0.08);
       border: 1px solid var(--glass-border);
       color: var(--text);
       font-family: inherit;
-      font-size: 0.85rem;
-      font-weight: 700;
+      font-size: 0.86rem;
+      font-weight: 600;
       padding: 10px 20px;
       border-radius: 999px;
       cursor: pointer;
       transition: background 0.2s, transform 0.15s;
     }
-    .copy-btn:hover { background: rgba(255, 255, 255, 0.16); transform: translateY(-1px); }
-    .copy-btn.copied { color: var(--gold); border-color: rgba(255, 211, 110, 0.4); }
+    .ghost-btn:hover { background: rgba(255, 255, 255, 0.16); transform: translateY(-1px); }
+    .ghost-btn.copied { color: var(--gold); border-color: rgba(255, 211, 110, 0.4); }
 
-    .footer {
-      text-align: center;
-      font-size: 0.72rem;
-      color: #7d6f9c;
-      margin-top: 26px;
-    }
+    .footer { text-align: center; font-size: 0.72rem; color: #7d6f9c; margin-top: 26px; }
 
-    /* Sparkles burst */
-    .spark {
-      position: absolute;
-      width: 8px; height: 8px;
-      border-radius: 50%;
-      pointer-events: none;
-      z-index: 5;
-    }
-    @keyframes sparkFly {
-      0% { transform: translate(0,0) scale(1); opacity: 1; }
-      100% { transform: translate(var(--dx), var(--dy)) scale(0); opacity: 0; }
-    }
+    .spark { position: fixed; width: 8px; height: 8px; border-radius: 50%; pointer-events: none; z-index: 5; }
+    @keyframes sparkFly { to { transform: translate(var(--dx), var(--dy)) scale(0); opacity: 0; } }
 
-    .loading-dots::after {
-      content: '';
-      animation: dots 1.4s steps(4, end) infinite;
-    }
+    .loading-dots::after { content: ''; animation: dots 1.4s steps(4, end) infinite; }
     @keyframes dots {
-      0% { content: ''; } 25% { content: '・'; } 50% { content: '・・'; }
-      75% { content: '・・・'; } 100% { content: ''; }
+      0% { content: ''; } 25% { content: '.'; } 50% { content: '..'; }
+      75% { content: '...'; } 100% { content: ''; }
     }
 
     @media (max-width: 480px) {
-      .container { padding: 32px 22px 30px; }
-      h1 { font-size: 1.7rem; }
-      .hanko { --size: 160px; }
+      body { padding-top: 20px; }
+      .container { padding: 30px 18px 26px; border-radius: 22px; }
+      h1 { font-size: 1.75rem; }
+      .step-hint { margin-left: 0; }
+      .hanko { --size: 165px; }
     }
   </style>
 </head>
 <body>
   <div class="bg-kanji" id="bgKanji" aria-hidden="true"></div>
 
-  <div class="container">
-    <span class="badge">✦ NAME KANJI MAKER</span>
-    <h1>名前漢字メーカー</h1>
-    <p class="subtitle">英語の名前を <b style="color:var(--text)">マイク🎤</b> で話すか入力すると、<br>響きと意味に合った漢字をハンコ風にお届けします。</p>
+  <main class="container">
+    <span class="badge">✦ YOUR NAME IN KANJI</span>
+    <h1>Kanji Name Maker <span class="jp">漢字</span></h1>
+    <p class="subtitle">Say or type your name, tell us a little about yourself, and get a Japanese kanji name chosen just for you — sealed with a traditional hanko stamp.</p>
 
-    <p class="speech-unsupported" id="speechUnsupported">
-      ※ このブラウザは音声入力に対応していません。テキスト入力をご利用ください。
-    </p>
+    <!-- Step 1: name -->
+    <section class="step">
+      <div class="step-title"><span class="step-num">1</span>Your name</div>
+      <p class="step-hint">Tap the mic and say your name, or type it in.</p>
+      <p class="speech-unsupported" id="speechUnsupported">
+        Voice input isn't supported in this browser. Please type your name instead (Chrome works best).
+      </p>
+      <div class="input-area">
+        <input type="text" id="nameInput" placeholder="e.g. Michael, Sarah, William"
+          autocomplete="off" autocorrect="off" spellcheck="false" maxlength="60">
+        <button class="mic-btn" id="micBtn" title="Speak your name" aria-label="Speak your name">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm6-3c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
+          </svg>
+        </button>
+      </div>
+    </section>
 
-    <div class="input-area">
-      <input type="text" id="nameInput" placeholder="例: Michael, Sarah, William..."
-        autocomplete="off" autocorrect="off" spellcheck="false">
-      <button class="mic-btn" id="micBtn" title="音声入力" aria-label="音声入力">
-        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm6-3c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
-        </svg>
-      </button>
-    </div>
+    <!-- Step 2: options -->
+    <section class="step">
+      <div class="step-title"><span class="step-num">2</span>About you <span class="optional">Optional</span></div>
+      <p class="step-hint">The more you share, the more personal your kanji will be.</p>
 
-    <button class="convert-btn" id="convertBtn" disabled>漢字に変換する</button>
+      <div class="group">
+        <div class="group-label">Gender <small>Pick one</small></div>
+        <div class="chips" data-group="gender" data-max="1">
+          <button class="chip" data-value="Male">Male</button>
+          <button class="chip" data-value="Female">Female</button>
+          <button class="chip" data-value="Non-binary">Non-binary</button>
+        </div>
+      </div>
 
+      <div class="group">
+        <div class="group-label">Age <small>Pick one</small></div>
+        <div class="chips" data-group="age" data-max="1">
+          <button class="chip" data-value="Child">Child</button>
+          <button class="chip" data-value="Teen">Teen</button>
+          <button class="chip" data-value="20s">20s</button>
+          <button class="chip" data-value="30s">30s</button>
+          <button class="chip" data-value="40s">40s</button>
+          <button class="chip" data-value="50s">50s</button>
+          <button class="chip" data-value="60+">60+</button>
+        </div>
+      </div>
+
+      <div class="group">
+        <div class="group-label">Things you love <small id="interestsCount">Up to 5</small></div>
+        <div class="chips" data-group="interests" data-max="5">
+          <button class="chip" data-value="Music">🎵 Music</button>
+          <button class="chip" data-value="Art">🎨 Art</button>
+          <button class="chip" data-value="Sports">⚽ Sports</button>
+          <button class="chip" data-value="Nature">🌿 Nature</button>
+          <button class="chip" data-value="Travel">✈️ Travel</button>
+          <button class="chip" data-value="Food">🍣 Food</button>
+          <button class="chip" data-value="Reading">📚 Reading</button>
+          <button class="chip" data-value="Gaming">🎮 Gaming</button>
+          <button class="chip" data-value="Technology">💻 Technology</button>
+          <button class="chip" data-value="Animals">🐾 Animals</button>
+          <button class="chip" data-value="The ocean">🌊 The ocean</button>
+          <button class="chip" data-value="Anime &amp; manga">🌸 Anime &amp; manga</button>
+          <button class="chip" data-value="Martial arts">🥋 Martial arts</button>
+          <button class="chip" data-value="Flowers">💐 Flowers</button>
+          <button class="chip" data-value="The stars">✨ The stars</button>
+          <button class="chip" data-value="Family">👨‍👩‍👧 Family</button>
+        </div>
+      </div>
+
+      <div class="group">
+        <div class="group-label">How should your name feel? <small id="vibesCount">Up to 3</small></div>
+        <div class="chips" data-group="vibes" data-max="3">
+          <button class="chip" data-value="Strong">Strong</button>
+          <button class="chip" data-value="Gentle">Gentle</button>
+          <button class="chip" data-value="Elegant">Elegant</button>
+          <button class="chip" data-value="Bright">Bright</button>
+          <button class="chip" data-value="Wise">Wise</button>
+          <button class="chip" data-value="Brave">Brave</button>
+          <button class="chip" data-value="Kind">Kind</button>
+          <button class="chip" data-value="Calm">Calm</button>
+          <button class="chip" data-value="Mysterious">Mysterious</button>
+          <button class="chip" data-value="Free-spirited">Free-spirited</button>
+        </div>
+      </div>
+
+      <div class="group">
+        <div class="group-label">Anything else? <small>Optional</small></div>
+        <input type="text" id="noteInput" maxlength="120"
+          placeholder="e.g. I love cherry blossoms and morning runs">
+      </div>
+    </section>
+
+    <!-- Step 3: convert -->
+    <button class="convert-btn" id="convertBtn" disabled>Create my kanji name</button>
     <p class="status" id="status"></p>
 
-    <div class="result" id="result">
+    <!-- Result -->
+    <section class="result" id="result" aria-live="polite">
       <p class="result-label" id="resultLabel"></p>
-      <div class="hanko" id="hanko">
-        <span class="kanji" id="kanjiDisplay"></span>
+      <div class="hanko" id="hanko"><span class="kanji" id="kanjiDisplay"></span></div>
+      <div class="reading">
+        <div class="romaji" id="romajiDisplay"></div>
+        <div class="hiragana" id="hiraganaDisplay"></div>
       </div>
-      <div class="reading" id="readingDisplay"></div>
-      <div class="explanation" id="explanationDisplay"></div>
-      <button class="copy-btn" id="copyBtn">漢字をコピー</button>
-    </div>
 
-    <p class="footer">Powered by Claude · あなたの名前に、物語を。</p>
-  </div>
+      <div class="char-section" id="charSection">
+        <p class="section-title">What each kanji means</p>
+        <div class="char-grid" id="charGrid"></div>
+      </div>
+
+      <div class="explanation-section">
+        <p class="section-title">Why it suits you</p>
+        <div class="explanation" id="explanationDisplay"></div>
+      </div>
+
+      <div class="result-actions">
+        <button class="ghost-btn" id="copyBtn">Copy kanji</button>
+        <button class="ghost-btn" id="againBtn">Try again</button>
+      </div>
+    </section>
+
+    <p class="footer">Powered by Claude · A name with a story.</p>
+  </main>
 
   <script>
-    // ===== Background floating kanji =====
+    // ===== Background decoration =====
     (function () {
       const pool = '愛勇夢光希星空海月花風雅誠心翔輝彩和真優';
       const host = document.getElementById('bgKanji');
@@ -445,10 +573,6 @@
         s.style.animationDelay = -Math.random() * dur + 's';
         host.appendChild(s);
       }
-    })();
-
-    // ===== Sakura petals =====
-    (function () {
       for (let i = 0; i < 12; i++) {
         const p = document.createElement('div');
         p.className = 'petal';
@@ -456,33 +580,67 @@
         const dur = 7 + Math.random() * 8;
         p.style.animationDuration = dur + 's';
         p.style.animationDelay = -Math.random() * dur + 's';
-        const scale = 0.6 + Math.random() * 0.9;
-        p.style.transform = `scale(${scale})`;
         document.body.appendChild(p);
       }
     })();
 
     // ===== Elements =====
-    const nameInput = document.getElementById('nameInput');
-    const micBtn = document.getElementById('micBtn');
-    const convertBtn = document.getElementById('convertBtn');
-    const status = document.getElementById('status');
-    const result = document.getElementById('result');
-    const hanko = document.getElementById('hanko');
-    const kanjiDisplay = document.getElementById('kanjiDisplay');
-    const readingDisplay = document.getElementById('readingDisplay');
-    const explanationDisplay = document.getElementById('explanationDisplay');
-    const resultLabel = document.getElementById('resultLabel');
-    const copyBtn = document.getElementById('copyBtn');
-    const speechUnsupported = document.getElementById('speechUnsupported');
+    const $ = (id) => document.getElementById(id);
+    const nameInput = $('nameInput');
+    const noteInput = $('noteInput');
+    const micBtn = $('micBtn');
+    const convertBtn = $('convertBtn');
+    const status = $('status');
+    const result = $('result');
+    const hanko = $('hanko');
+    const kanjiDisplay = $('kanjiDisplay');
+    const copyBtn = $('copyBtn');
 
+    // ===== Option chips =====
+    const selections = { gender: [], age: [], interests: [], vibes: [] };
+
+    document.querySelectorAll('.chips').forEach((group) => {
+      const key = group.dataset.group;
+      const max = Number(group.dataset.max);
+      group.addEventListener('click', (e) => {
+        const chip = e.target.closest('.chip');
+        if (!chip) return;
+        const value = chip.dataset.value;
+        const list = selections[key];
+        const idx = list.indexOf(value);
+
+        if (idx >= 0) {
+          list.splice(idx, 1);
+          chip.classList.remove('selected');
+        } else if (max === 1) {
+          group.querySelectorAll('.chip').forEach((c) => c.classList.remove('selected'));
+          list.length = 0;
+          list.push(value);
+          chip.classList.add('selected');
+        } else if (list.length < max) {
+          list.push(value);
+          chip.classList.add('selected');
+        } else {
+          chip.classList.remove('shake');
+          void chip.offsetWidth;
+          chip.classList.add('shake');
+        }
+        updateCounts();
+      });
+    });
+
+    function updateCounts() {
+      $('interestsCount').textContent = `${selections.interests.length} / 5 selected`;
+      $('vibesCount').textContent = `${selections.vibes.length} / 3 selected`;
+    }
+
+    // ===== Voice input =====
     let recognition = null;
     let isRecording = false;
-
-    // ===== Web Speech API =====
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
     if (!SpeechRecognition) {
-      speechUnsupported.style.display = 'block';
+      $('speechUnsupported').style.display = 'block';
       micBtn.disabled = true;
     } else {
       recognition = new SpeechRecognition();
@@ -493,26 +651,25 @@
       recognition.onstart = () => {
         isRecording = true;
         micBtn.classList.add('recording');
-        setStatus('listening', '🎤 聞いています… 名前を話してください');
+        setStatus('listening', '🎤 Listening… say your name');
       };
       recognition.onresult = (e) => {
         let t = '';
         for (let i = e.resultIndex; i < e.results.length; i++) t += e.results[i][0].transcript;
-        nameInput.value = t;
+        nameInput.value = t.replace(/[.。]$/, '');
         updateConvertBtn();
       };
       recognition.onend = () => {
         isRecording = false;
         micBtn.classList.remove('recording');
-        if (nameInput.value.trim()) setStatus('', '');
-        else setStatus('', '');
+        if (status.classList.contains('listening')) setStatus('', '');
       };
       recognition.onerror = (e) => {
         isRecording = false;
         micBtn.classList.remove('recording');
-        if (e.error === 'no-speech') setStatus('error', '音声が検出されませんでした。もう一度お試しください。');
-        else if (e.error === 'not-allowed') setStatus('error', 'マイクの使用が許可されていません。ブラウザの設定を確認してください。');
-        else if (e.error !== 'aborted') setStatus('error', `音声認識エラー: ${e.error}`);
+        if (e.error === 'no-speech') setStatus('error', "We didn't hear anything. Please try again.");
+        else if (e.error === 'not-allowed') setStatus('error', 'Microphone access is blocked. Please allow it in your browser settings.');
+        else if (e.error !== 'aborted') setStatus('error', `Voice input error: ${e.error}`);
       };
     }
 
@@ -530,6 +687,7 @@
     function updateConvertBtn() { convertBtn.disabled = nameInput.value.trim().length === 0; }
     function setStatus(type, msg) { status.textContent = msg; status.className = 'status' + (type ? ' ' + type : ''); }
 
+    // ===== Convert =====
     convertBtn.addEventListener('click', convert);
 
     function sizeClass(str) {
@@ -562,6 +720,21 @@
       }
     }
 
+    function renderCharacters(chars) {
+      const grid = $('charGrid');
+      grid.innerHTML = '';
+      $('charSection').style.display = chars.length ? '' : 'none';
+      chars.forEach((c) => {
+        const card = document.createElement('div');
+        card.className = 'char-card';
+        const k = document.createElement('div'); k.className = 'c'; k.textContent = c.char || '';
+        const r = document.createElement('div'); r.className = 'r'; r.textContent = c.reading || '';
+        const m = document.createElement('div'); m.className = 'm'; m.textContent = c.meaning || '';
+        card.append(k, r, m);
+        grid.appendChild(card);
+      });
+    }
+
     async function convert() {
       const name = nameInput.value.trim();
       if (!name) return;
@@ -570,49 +743,68 @@
       if (isRecording) recognition?.stop();
       setStatus('', '');
       result.classList.remove('visible');
-      convertBtn.innerHTML = '<span class="loading-dots">変換中</span>';
+      convertBtn.innerHTML = '<span class="loading-dots">Creating your name</span>';
 
       try {
         const res = await fetch('/api/convert', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name }),
+          body: JSON.stringify({
+            name,
+            gender: selections.gender[0],
+            age: selections.age[0],
+            interests: selections.interests,
+            vibes: selections.vibes,
+            note: noteInput.value.trim(),
+          }),
         });
         const data = await res.json();
-        if (!res.ok) throw new Error(data.error || '変換に失敗しました。');
+        if (!res.ok) throw new Error(data.error || 'Something went wrong. Please try again.');
 
-        resultLabel.innerHTML = `<b>"${name}"</b> の漢字表記`;
+        const label = $('resultLabel');
+        label.textContent = '';
+        label.append('Your kanji name for ');
+        const b = document.createElement('b'); b.textContent = `"${name}"`;
+        label.append(b);
+
         kanjiDisplay.textContent = data.kanji;
         kanjiDisplay.className = 'kanji ' + sizeClass(data.kanji);
-        readingDisplay.textContent = data.reading;
-        explanationDisplay.textContent = data.explanation;
+        $('romajiDisplay').textContent = data.romaji || '';
+        $('hiraganaDisplay').textContent = data.hiragana || '';
+        renderCharacters(Array.isArray(data.characters) ? data.characters : []);
+        $('explanationDisplay').textContent = data.explanation;
 
-        // retrigger stamp animation
-        result.classList.remove('visible');
         void result.offsetWidth;
         result.classList.add('visible');
-
-        copyBtn.textContent = '漢字をコピー';
+        copyBtn.textContent = 'Copy kanji';
         copyBtn.classList.remove('copied');
 
-        setTimeout(burstSparkles, 400);
-        result.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        result.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        setTimeout(burstSparkles, 600);
       } catch (err) {
-        setStatus('error', err.message || 'エラーが発生しました。サーバーが起動しているか確認してください。');
+        const msg = err instanceof TypeError
+          ? "Can't reach the server. Make sure it is running (npm run dev)."
+          : err.message;
+        setStatus('error', msg);
       } finally {
-        convertBtn.innerHTML = '漢字に変換する';
-        convertBtn.disabled = nameInput.value.trim().length === 0;
+        convertBtn.textContent = 'Create my kanji name';
+        updateConvertBtn();
       }
     }
 
     copyBtn.addEventListener('click', async () => {
       try {
         await navigator.clipboard.writeText(kanjiDisplay.textContent);
-        copyBtn.textContent = '✓ コピーしました';
+        copyBtn.textContent = '✓ Copied';
         copyBtn.classList.add('copied');
       } catch {
-        copyBtn.textContent = 'コピーできませんでした';
+        copyBtn.textContent = "Couldn't copy";
       }
+    });
+
+    $('againBtn').addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      nameInput.focus({ preventScroll: true });
     });
   </script>
 </body>
