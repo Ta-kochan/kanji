@@ -25,7 +25,24 @@ const VIBES = [
   "Free-spirited", "Kind", "Brave", "Calm",
 ];
 
+// Result themes. Ids must match the [data-theme] styles and the
+// images/theme-<id>.png files on the front end.
+const THEMES: Record<string, string> = {
+  sakura: "soft, gentle, elegant, romantic (cherry blossoms)",
+  ocean: "calm, free, open-minded, loves the sea",
+  forest: "natural, grounded, kind, loves nature and animals",
+  sunrise: "bright, cheerful, energetic, optimistic",
+  "starry-night": "dreamy, mysterious, imaginative, loves the stars",
+  flame: "strong, brave, passionate, sporty",
+  moon: "calm, wise, thoughtful, quiet",
+  autumn: "warm, kind, mature, loves family and food",
+  snow: "pure, gentle, serene, graceful",
+  neon: "modern, playful, loves games, tech and anime",
+};
+const DEFAULT_THEME = "sakura";
+
 const MAX_NAME_LENGTH = 60;
+const MAX_NAME_PARTS = 4;
 const MAX_NOTE_LENGTH = 120;
 
 interface ConvertRequest {
@@ -37,6 +54,13 @@ interface ConvertRequest {
   note?: unknown;
 }
 
+interface NamePart {
+  original: string;
+  kanji: string;
+  hiragana: string;
+  romaji: string;
+}
+
 interface KanjiCharacter {
   char: string;
   reading: string;
@@ -44,11 +68,10 @@ interface KanjiCharacter {
 }
 
 interface ConvertResponse {
-  kanji: string;
-  hiragana: string;
-  romaji: string;
+  parts: NamePart[];
   characters: KanjiCharacter[];
   explanation: string;
+  theme: string;
 }
 
 function pickOne(value: unknown, allowed: string[]): string | null {
@@ -81,14 +104,24 @@ function buildProfile(body: ConvertRequest): string {
   return lines.length ? lines.join("\n") : "- (No extra details given)";
 }
 
+function isNamePart(p: unknown): p is NamePart {
+  const o = p as NamePart;
+  return !!o && typeof o.kanji === "string" && o.kanji.trim() !== "";
+}
+
 app.post("/api/convert", async (req, res) => {
   const body = (req.body ?? {}) as ConvertRequest;
   const name = cleanText(body.name, MAX_NAME_LENGTH);
+  const words = name.split(/\s+/).filter(Boolean).slice(0, MAX_NAME_PARTS);
 
-  if (!name) {
+  if (words.length === 0) {
     res.status(400).json({ error: "Please enter your name." });
     return;
   }
+
+  const themeList = Object.entries(THEMES)
+    .map(([id, desc]) => `- ${id}: ${desc}`)
+    .join("\n");
 
   try {
     const response = await client.messages.create({
@@ -99,22 +132,30 @@ app.post("/api/convert", async (req, res) => {
           role: "user",
           content: `You create Japanese kanji names (ateji) for people from abroad.
 
-Name: "${name}"
+The name has ${words.length} part(s), in this order:
+${words.map((w, i) => `${i + 1}. "${w}"`).join("\n")}
+
 About the person:
 ${buildProfile(body)}
 
-Choose kanji whose combined Japanese reading sounds as close as possible to the name, and whose meanings reflect the person's details above. Prefer kanji that are commonly used in Japanese given names and have positive meanings. Match the feel to the gender and age group when given.
+For EACH name part, choose kanji whose combined Japanese reading sounds as close as possible to that part, and whose meanings reflect the person's details above. Prefer kanji commonly used in Japanese names, with positive meanings. Match the feel to the gender and age group when given. Keep each part to 1-4 kanji.
+
+Also pick the one theme that best matches this person's personality, from this list:
+${themeList}
 
 Reply with JSON only, in this exact shape:
 {
-  "kanji": "the kanji name",
-  "hiragana": "reading in hiragana",
-  "romaji": "reading in romaji, e.g. Mi-ka-e-ru",
+  "parts": [
+    { "original": "the name part as given", "kanji": "kanji for this part", "hiragana": "reading in hiragana", "romaji": "reading in romaji, e.g. Mi-ka-e-ru" }
+  ],
   "characters": [
     { "char": "one kanji", "reading": "its reading in romaji", "meaning": "short English meaning" }
   ],
-  "explanation": "2-3 friendly sentences in English explaining why these kanji suit this person, referring to their details."
-}`,
+  "explanation": "2-3 friendly sentences in English explaining why these kanji suit this person, referring to their details.",
+  "theme": "one theme id from the list"
+}
+
+"parts" must have exactly ${words.length} item(s), in the same order as above. "characters" lists every kanji used, in order.`,
         },
       ],
     });
@@ -130,12 +171,22 @@ Reply with JSON only, in this exact shape:
     }
 
     const result = JSON.parse(jsonMatch[0]) as ConvertResponse;
-    if (!result.kanji || !result.hiragana || !result.explanation) {
+    const parts = Array.isArray(result.parts) ? result.parts.filter(isNamePart) : [];
+    if (parts.length === 0 || !result.explanation) {
       throw new Error("The result was incomplete. Please try again.");
     }
-    if (!Array.isArray(result.characters)) result.characters = [];
 
-    res.json(result);
+    res.json({
+      parts: parts.map((p, i) => ({
+        original: p.original || words[i] || "",
+        kanji: p.kanji.trim(),
+        hiragana: p.hiragana || "",
+        romaji: p.romaji || "",
+      })),
+      characters: Array.isArray(result.characters) ? result.characters : [],
+      explanation: result.explanation,
+      theme: typeof result.theme === "string" && Object.hasOwn(THEMES, result.theme) ? result.theme : DEFAULT_THEME,
+    });
   } catch (error) {
     if (error instanceof Anthropic.AuthenticationError) {
       res.status(500).json({ error: "The API key is missing or invalid. Check ANTHROPIC_API_KEY in the .env file." });
