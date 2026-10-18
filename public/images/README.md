@@ -2,7 +2,7 @@
 
 Put image files here using exactly these names. Any file that is missing is simply skipped, and the page falls back to gradients.
 
-How to create them: see `docs/chatgpt-image-prompts.md` (ChatGPT) or `docs/midjourney-prompts.md` (Midjourney).
+How to create them: run `npm run images` (needs `OPENAI_API_KEY` in `.env`, see `scripts/generate-images.mjs`), or make them by hand with the prompts in `docs/chatgpt-image-prompts.md` (ChatGPT) or `docs/midjourney-prompts.md` (Midjourney).
 
 | File | Where it appears | Transparent background? | Suggested size |
 |---|---|---|---|
