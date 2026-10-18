@@ -2,7 +2,7 @@
 
 Put image files here using exactly these names. Any file that is missing is simply skipped, and the page falls back to gradients.
 
-How to create them: see `docs/midjourney-prompts.md`.
+How to create them: see `docs/chatgpt-image-prompts.md` (ChatGPT) or `docs/midjourney-prompts.md` (Midjourney).
 
 | File | Where it appears | Transparent background? | Suggested size |
 |---|---|---|---|
